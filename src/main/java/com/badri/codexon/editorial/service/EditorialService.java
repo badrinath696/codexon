@@ -13,6 +13,7 @@ import com.badri.codexon.problem.entity.Problem;
 import com.badri.codexon.problem.repository.ProblemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +30,7 @@ public class EditorialService {
         return editorialMapper.toResponse(editorialRepository.save(editorial));
     }
 
+    @Transactional
     public EditorialResponse updateEditorial(Long id,EditorialRequest request){
         Editorial editorial=editorialRepository.findById(id).orElseThrow(()->new EditorialNotFoundException(id));
         editorial.setTitle(request.title());
@@ -38,11 +40,13 @@ public class EditorialService {
         return editorialMapper.toResponse(editorial);
     }
 
+    @Transactional
     public void editEditorial(Long editorialId, EditorialPatchRequest editorialPatchRequest) {
         Editorial editorial=editorialRepository.findById(editorialId).orElseThrow(()->new EditorialNotFoundException(editorialId));
         editorialMapper.editEditorial(editorial,editorialPatchRequest);
     }
 
+    @Transactional
     public void deleteEditorial(Long editorialId) {
         Editorial editorial=editorialRepository.findById(editorialId).orElseThrow(()->new EditorialNotFoundException(editorialId));
         editorialRepository.delete(editorial);

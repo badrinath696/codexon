@@ -23,6 +23,7 @@ import com.badri.codexon.testcase.dto.TestCaseResponse;
 import com.badri.codexon.testcase.service.TestCaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -38,46 +39,55 @@ public class AdminProblemOrchestra {
     private final ProblemTagService problemTagService;
     private final ProblemRepository problemRepository;
 
+    @Transactional
     public List<ExampleResponse> createExamples(Long problemId, List<ExampleRequest> requests) {
         Problem problem=problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         return requests.stream().map(request->exampleService.createExample(problem,request)).toList();
     }
 
+    @Transactional
     public List<TestCaseResponse> createTestCases(Long problemId, List<TestCaseRequest> testCaseRequests){
         Problem problem=problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         return testCaseRequests.stream().map(testCaseRequest -> testCaseService.createTestCase(problem,testCaseRequest)).toList();
     }
 
+    @Transactional
     public EditorialResponse createEditorial(Long problemId, EditorialRequest editorialRequest){
         return editorialService.createEditorial(problemId,editorialRequest);
     }
 
+    @Transactional
     public List<ProblemTagResponse> createProblemTags(Long problemId, List<ProblemTagRequest> tagIds){
         Problem problem=problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         return tagIds.stream().map(tagId->problemTagService
                 .createProblemTag(problem, tagId.tagId())).toList();
     }
 
+    @Transactional
     public List<ExampleResponse> updateExamples(Long problemId,List<ExampleRequest> exampleRequests){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         return exampleRequests.stream().map(exampleRequest -> exampleService.updateExample(exampleRequest.id(),exampleRequest)).toList();
     }
 
+    @Transactional
     public List<TestCaseResponse> updateTestCass(Long problemId,List<TestCaseRequest> testCaseRequests){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         return testCaseRequests.stream().map(testCaseRequest -> testCaseService.updateTestCase(testCaseRequest.id(), testCaseRequest)).toList();
     }
 
+    @Transactional
     public List<ProblemTagResponse> updateProblemTags(Long problemId,List<ProblemTagRequest> problemTagRequests){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         return problemTagRequests.stream().map(problemTagRequest -> problemTagService.updateProblemTag(problemTagRequest.id(), problemTagRequest)).toList();
     }
 
+    @Transactional
     public EditorialResponse updateEditorial(Long problemId,EditorialRequest editorialRequest){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         return editorialService.updateEditorial(editorialRequest.id(),editorialRequest);
     }
 
+    @Transactional
     public ProblemDetailsResponse createFullProblem(FullProblemRequest fullProblemRequest){
         ProblemResponse problem=adminProblemService.createProblem(problemMapper.toProblemRequest(fullProblemRequest));
         Long problemId=problem.id();
@@ -91,6 +101,7 @@ public class AdminProblemOrchestra {
         return problemMapper.toDetailsResponse(fullProblem);
     }
 
+    @Transactional
     public ProblemDetailsResponse updateFullProblem(Long problemId,FullProblemRequest fullProblemRequest) {
         ProblemResponse problemResponse=adminProblemService.updateProblem(problemId,problemMapper.toProblemRequest(fullProblemRequest));
         updateExamples(problemId,fullProblemRequest.exampleRequestList());
@@ -101,49 +112,58 @@ public class AdminProblemOrchestra {
         return problemMapper.toDetailsResponse(fullProblem);
     }
 
+    @Transactional
     public void editExamples(Long problemId, List<ExamplePatchRequest> examplePatchRequests){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         examplePatchRequests.forEach(examplePatchRequest -> exampleService.editExample(
                 examplePatchRequest.id(),examplePatchRequest));
     }
 
+    @Transactional
     public void editTestCases(Long problemId, List<TestCasePatchRequest> testCasePatchRequests){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         testCasePatchRequests.forEach(testCasePatchRequest -> testCaseService.editTestCase(
                 testCasePatchRequest.id(),testCasePatchRequest));
     }
 
+    @Transactional
     public void editProblemTags(Long problemId,List<ProblemTagRequest> problemTagRequests){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         problemTagRequests.forEach(problemTagRequest -> problemTagService.editProblemTag(
                 problemTagRequest.id(),problemTagRequest));
     }
 
+    @Transactional
     public void editEditorial(Long problemId, EditorialPatchRequest editorialPatchRequest){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         editorialService.editEditorial(editorialPatchRequest.id(),editorialPatchRequest);
     }
 
+    @Transactional
     public void deleteExample(Long problemId,Long exampleId){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         exampleService.deleteExample(exampleId);
     }
 
+    @Transactional
     public void deleteTestCase(Long problemId,Long TestCaseId){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         testCaseService.deleteTestCase(TestCaseId);
     }
 
+    @Transactional
     public void deleteEditorial(Long problemId,Long editorialId){
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         editorialService.deleteEditorial(editorialId);
     }
 
+    @Transactional
     public void deleteProblemTag(Long problemId, Long problemTagId) {
         problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
-        problemTagService.deleteEditorial(problemTagId);
+        problemTagService.deleteProblemTag(problemTagId);
     }
 
+    @Transactional
     public void deleteProblem(Long problemId) {
         Problem problem=problemRepository.findById(problemId).orElseThrow(()->new ProblemNotFoundException(problemId));
         problemRepository.delete(problem);

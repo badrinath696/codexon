@@ -12,6 +12,7 @@ import com.badri.codexon.tags.entity.Tags;
 import com.badri.codexon.tags.repository.TagRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class ProblemTagService {
     private final ProblemTagRepository problemTagRepository;
     private final ProblemMapper problemMapper;
 
+    @Transactional
     public ProblemTagResponse createProblemTag(Problem problem, Long tagId){
         Tags tag=tagRepository.findById(tagId).orElseThrow(()->new TagNotFoundException(tagId));
         ProblemTag problemTag=new ProblemTag();
@@ -29,6 +31,7 @@ public class ProblemTagService {
         return problemMapper.toProblemTagResponse((problemTagRepository.save(problemTag)).getTag());
     }
 
+    @Transactional
     public ProblemTagResponse updateProblemTag(Long id,ProblemTagRequest problemTagRequest) {
         ProblemTag problemTag=problemTagRepository.findById(id).orElseThrow(()->new ProblemTagNotFoundException(id));
         Tags tag=tagRepository.findById(problemTagRequest.tagId()).orElseThrow(()->new TagNotFoundException(problemTagRequest.tagId()));
@@ -36,6 +39,7 @@ public class ProblemTagService {
         return problemMapper.toProblemTagResponse(problemTag.getTag());
     }
 
+    @Transactional
     public void editProblemTag(Long problemTagId, ProblemTagRequest problemTagRequest){
         ProblemTag problemTag=problemTagRepository.findById(problemTagId).orElseThrow(()->new ProblemTagNotFoundException(problemTagId));
         Tags tag=tagRepository.findById(problemTagRequest.tagId()).orElseThrow(()->new TagNotFoundException(
@@ -43,7 +47,7 @@ public class ProblemTagService {
         problemTag.setTag(tag);
     }
 
-    public void deleteEditorial(Long problemTagId) {
+    public void deleteProblemTag(Long problemTagId) {
         ProblemTag problemTag=problemTagRepository.findById(problemTagId).orElseThrow(()->new ProblemTagNotFoundException(problemTagId));
         problemTagRepository.delete(problemTag);
     }

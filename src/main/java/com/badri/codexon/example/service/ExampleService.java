@@ -10,6 +10,7 @@ import com.badri.codexon.example.repository.ExampleRepository;
 import com.badri.codexon.problem.entity.Problem;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -24,6 +25,7 @@ public class ExampleService {
         return exampleMapper.toResponse(exampleRepository.save(example));
     }
 
+    @Transactional
     public ExampleResponse updateExample(Long exampleId,ExampleRequest exampleRequest){
         Example example=exampleRepository.findById(exampleId).orElseThrow(()->new ExampleNotFoundException(exampleId));
         example.setInputData(exampleRequest.inputData());
@@ -32,6 +34,7 @@ public class ExampleService {
         return exampleMapper.toResponse(example);
     }
 
+    @Transactional
     public void editExample(Long exampleId, ExamplePatchRequest examplePatchRequest){
         Example example=exampleRepository.findById(exampleId).orElseThrow(()->new ExampleNotFoundException(exampleId));
         if(examplePatchRequest.inputData()!=null){
@@ -45,6 +48,7 @@ public class ExampleService {
         }
     }
 
+    @Transactional
     public void deleteExample(Long exampleId){
         Example example=exampleRepository.findById(exampleId).orElseThrow(()->new ExampleNotFoundException(exampleId));
         exampleRepository.delete(example);
