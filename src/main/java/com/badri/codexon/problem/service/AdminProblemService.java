@@ -1,6 +1,7 @@
 package com.badri.codexon.problem.service;
 
 import com.badri.codexon.common.enums.ProblemStatus;
+import com.badri.codexon.common.exception.DuplicateProblemException;
 import com.badri.codexon.common.exception.ProblemNotFoundException;
 import com.badri.codexon.problem.dto.requestDto.ProblemPatchRequest;
 import com.badri.codexon.problem.dto.requestDto.ProblemRequest;
@@ -22,6 +23,9 @@ public class AdminProblemService {
 
     @Transactional
     public ProblemResponse createProblem(ProblemRequest request){
+        if(adminProblemRepository.existsByTitle(request.title())){
+            throw new DuplicateProblemException(request.title());
+        }
         Problem problem=problemMapper.toProblem(request);
         problem.setProblemStatus(ProblemStatus.DRAFT);
         return problemMapper.toProblemResponse(adminProblemRepository.save(problem));

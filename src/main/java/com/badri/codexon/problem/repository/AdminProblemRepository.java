@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AdminProblemRepository extends JpaRepository<Problem,Long> {
 
+    boolean existsByTitle(String title);
 
 
 }

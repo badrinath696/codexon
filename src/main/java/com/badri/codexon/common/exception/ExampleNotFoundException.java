@@ -1,6 +1,6 @@
 package com.badri.codexon.common.exception;
 
-public class ExampleNotFoundException extends RuntimeException {
+public class ExampleNotFoundException extends BusinessException {
     public ExampleNotFoundException(Long exampleId) {
         super("There is no Example with id:"+exampleId);
     }
